@@ -6,4 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Dev-only handle so E2E tests can assert no ScrollTrigger leaks across resize.
+if (import.meta.env.DEV) {
+  (window as unknown as { __ScrollTrigger?: typeof ScrollTrigger }).__ScrollTrigger = ScrollTrigger;
+}
+
 export { gsap, ScrollTrigger };

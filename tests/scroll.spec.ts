@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
  * visual-regression assertions.
  */
 
-const POSITIONS = [0, 0.25, 0.5, 0.75, 1];
+const POSITIONS = [0, 0.1, 0.25, 0.5, 0.75, 1];
 
 test('scrolls through the descent and captures each depth', async ({ page }) => {
   await page.goto('/');
@@ -33,6 +33,33 @@ test('scrolls through the descent and captures each depth', async ({ page }) => 
   expect(scale as number).toBeGreaterThan(0.9);
 });
 
+test('no ScrollTrigger leaks across repeated resizes', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+
+  const count = () =>
+    page.evaluate(() => {
+      const st = (window as unknown as { __ScrollTrigger?: { getAll(): unknown[] } }).__ScrollTrigger;
+      return st ? st.getAll().length : -1;
+    });
+
+  const baseline = await count();
+  expect(baseline, 'ScrollTrigger dev handle should be exposed').toBeGreaterThan(0);
+
+  for (const [w, h] of [
+    [1024, 768],
+    [768, 1024],
+    [1440, 900],
+    [1280, 800],
+  ] as const) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.waitForTimeout(300);
+  }
+
+  const after = await count();
+  expect(after, `triggers grew from ${baseline} to ${after} — leak on resize`).toBe(baseline);
+});
+
 test('reduced-motion: no console errors and content is present', async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: 'reduce' });
   const page = await context.newPage();
@@ -43,7 +70,7 @@ test('reduced-motion: no console errors and content is present', async ({ browse
   await page.goto('/');
   await page.waitForLoadState('networkidle');
 
-  await expect(page.getByRole('heading', { name: 'Surface' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Into the Deep' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Hadal' })).toBeAttached();
 
   expect(errors, `console errors: ${errors.join('\n')}`).toHaveLength(0);
