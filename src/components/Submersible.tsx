@@ -4,6 +4,16 @@ import { gsap, ScrollTrigger } from '../lib/gsap';
 const clamp01 = gsap.utils.clamp(0, 1);
 const lerp = gsap.utils.interpolate;
 
+// Aft-vent bubbles (SVG user units), each with its own size/rhythm.
+const BUBBLES = [
+  { cx: -30, r: 2.4, rise: 42, dur: 2.4 },
+  { cx: -24, r: 1.6, rise: 52, dur: 3.1 },
+  { cx: -34, r: 1.9, rise: 46, dur: 2.7 },
+  { cx: -27, r: 1.3, rise: 58, dur: 3.5 },
+  { cx: -31, r: 2.0, rise: 50, dur: 2.9 },
+  { cx: -22, r: 1.5, rise: 55, dur: 3.3 },
+];
+
 /** Smooth 0→1 ramp used for entry/exit fades. */
 const ramp = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 
@@ -96,6 +106,20 @@ export function Submersible({ reducedMotion, journeySelector }: Props) {
       });
       measure();
       apply(st.progress);
+
+      // Continuously rising bubble trail (loops independently of scroll).
+      q('[data-bubble]').forEach((bubble, i) => {
+        const b = BUBBLES[i];
+        const tl = gsap.timeline({ repeat: -1, delay: i * 0.4 });
+        tl.fromTo(
+          bubble,
+          { y: 0, x: 0, scale: 0.6 },
+          { y: -b.rise, x: i % 2 === 0 ? 4 : -4, scale: 1, duration: b.dur, ease: 'sine.out' },
+          0,
+        )
+          .fromTo(bubble, { opacity: 0 }, { opacity: 0.7, duration: b.dur * 0.25 }, 0)
+          .to(bubble, { opacity: 0, duration: b.dur * 0.5 }, b.dur * 0.5);
+      });
     }, rootRef);
 
     return () => ctx.revert();
@@ -115,6 +139,22 @@ export function Submersible({ reducedMotion, journeySelector }: Props) {
         >
           {/* ---- Submersible ---- */}
           <g data-form="sub">
+            {/* rising bubble trail from the aft vent */}
+            <g data-bubbles>
+              {BUBBLES.map((b, i) => (
+                <circle
+                  key={i}
+                  data-bubble
+                  cx={b.cx}
+                  cy={-24}
+                  r={b.r}
+                  fill="none"
+                  stroke="#bfefff"
+                  strokeWidth="1"
+                  opacity="0"
+                />
+              ))}
+            </g>
             {/* head-lamp beam */}
             <path d="M52,-4 L150,-40 L150,40 L52,4 Z" fill="#eaf6fb" opacity="0.10" />
             <ellipse cx="0" cy="0" rx="48" ry="26" fill="#0a3a5c" stroke="#7ef0d0" strokeWidth="2" />

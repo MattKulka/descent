@@ -76,7 +76,7 @@ export function MarineSnow({ reducedMotion }: Props) {
       ref={rootRef}
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 overflow-hidden"
-      style={{ zIndex: -4, opacity: reducedMotion ? 0.5 : 0 }}
+      style={{ zIndex: -7, opacity: reducedMotion ? 0.5 : 0 }}
     >
       {PARTICLES.map((p, i) => (
         <span

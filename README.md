@@ -24,10 +24,18 @@ Six set-pieces, stitched into one uninterrupted descent:
 | **Hadal** | 6000 m+ | Horizontal-scroll creature gallery driven by vertical scroll |
 | **Closing** | 10,935 m | Reveal-on-enter sign-off + scroll-to-top |
 
-Throughout, ambient depth cues tie the zones together: a drifting **marine-snow**
-particle field that fades in with depth, distant **bioluminescent creatures**
-twinkling in the abyss, idle-floating gallery creatures, and a fixed
-instrument-style **depth readout** that ticks from 0 to the bottom of the ocean.
+Throughout, ambient life ties the zones together: a drifting **marine-snow**
+particle field that fades in with depth, a darting **fish school** near the
+surface, pulsing **jellyfish** through the twilight, a lone **whale** gliding
+by in the midnight zone, distant **bioluminescent creatures** twinkling in the
+abyss, a **bubble trail** rising from the submersible, and an interactive
+**bioluminescent cursor** that stirs up glowing plankton as you move. A fixed
+instrument-style **depth readout** ticks from 0 to the bottom of the ocean.
+
+All ambient creatures are depth-anchored and driven by page-scroll progress
+(robust to the pinned sections they pass behind), with continuous idle motion
+(tail wiggle, bell pulse, whale fluke) layered on top — and every one is
+omitted or frozen under reduced motion.
 
 <p align="center">
   <img src="docs/media/pinned-beats.png" width="32%" alt="Pinned twilight beats" />

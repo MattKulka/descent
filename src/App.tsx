@@ -1,6 +1,8 @@
 import { ScrollProgress } from './components/ScrollProgress';
 import { DepthGradient } from './components/DepthGradient';
 import { MarineSnow } from './components/MarineSnow';
+import { Creatures } from './components/Creatures';
+import { CursorGlow } from './components/CursorGlow';
 import { DepthHUD } from './components/DepthHUD';
 import { Submersible } from './components/Submersible';
 import { Hero } from './scenes/Hero';
@@ -20,7 +22,9 @@ export default function App() {
     <>
       <DepthGradient reducedMotion={prefersReducedMotion} />
       <MarineSnow reducedMotion={prefersReducedMotion} />
+      <Creatures reducedMotion={prefersReducedMotion} />
       <Submersible reducedMotion={prefersReducedMotion} journeySelector="[data-journey]" />
+      <CursorGlow reducedMotion={prefersReducedMotion} />
       <ScrollProgress />
       <DepthHUD />
       <main>
