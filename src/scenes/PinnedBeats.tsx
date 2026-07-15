@@ -99,7 +99,7 @@ export function PinnedBeats() {
     <section
       ref={rootRef}
       aria-label="Descent through the twilight zone"
-      className="relative bg-gradient-to-b from-depth-twilight to-depth-midnight"
+      className="relative"
     >
       <div
         data-pin
