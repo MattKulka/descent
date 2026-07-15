@@ -1,5 +1,7 @@
 # Descent — a scroll-driven journey to the deep
 
+**▶ Live demo: [descent-nine.vercel.app](https://descent-nine.vercel.app)**
+
 An award-style, scroll-driven narrative site: one continuous long-scroll
 experience that carries you from the sunlit ocean surface down to the hadal
 trench, seven vertical miles below. Light fades, the palette darkens, a
