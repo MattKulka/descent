@@ -7,7 +7,7 @@ const clamp01 = gsap.utils.clamp(0, 1);
 const lerp = gsap.utils.interpolate;
 const ramp = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 
-type Kind = 'school' | 'jelly' | 'whale';
+type Kind = 'diver' | 'school' | 'jelly' | 'whale';
 type Cfg = {
   id: string;
   kind: Kind;
@@ -15,18 +15,22 @@ type Cfg = {
   top: string;
   xFrom: number; // vw
   xTo: number; // vw
+  yFrom?: number; // vh (optional vertical drift)
+  yTo?: number; // vh
   opacity: number;
 };
 
 // Depth-anchored ambient life. Each creature drifts across the screen while its
 // scroll "band" is active (page-progress driven, so it is robust to the pinned
 // sections it passes behind). Idle animations run continuously on top.
+// Jellyfish are kept to the edges so they never drift behind the copy.
 const CREATURES: Cfg[] = [
-  { id: 'school', kind: 'school', band: [0.05, 0.31], top: '19vh', xFrom: -28, xTo: 118, opacity: 0.55 },
-  { id: 'jelly-a', kind: 'jelly', band: [0.25, 0.5], top: '30vh', xFrom: 78, xTo: 20, opacity: 0.8 },
-  { id: 'jelly-b', kind: 'jelly', band: [0.29, 0.54], top: '58vh', xFrom: 18, xTo: 66, opacity: 0.7 },
-  { id: 'jelly-c', kind: 'jelly', band: [0.33, 0.57], top: '44vh', xFrom: 58, xTo: 34, opacity: 0.72 },
-  { id: 'whale', kind: 'whale', band: [0.42, 0.66], top: '36vh', xFrom: 118, xTo: -80, opacity: 0.24 },
+  { id: 'diver', kind: 'diver', band: [0.015, 0.19], top: '4vh', xFrom: 64, xTo: 72, yFrom: 0, yTo: 48, opacity: 0.9 },
+  { id: 'school', kind: 'school', band: [0.05, 0.31], top: '16vh', xFrom: -28, xTo: 120, opacity: 0.55 },
+  { id: 'jelly-a', kind: 'jelly', band: [0.25, 0.5], top: '22vh', xFrom: 86, xTo: 74, opacity: 0.8 },
+  { id: 'jelly-b', kind: 'jelly', band: [0.29, 0.54], top: '66vh', xFrom: 6, xTo: 16, opacity: 0.7 },
+  { id: 'jelly-c', kind: 'jelly', band: [0.33, 0.57], top: '50vh', xFrom: 88, xTo: 94, opacity: 0.72 },
+  { id: 'whale', kind: 'whale', band: [0.42, 0.66], top: '34vh', xFrom: -92, xTo: 122, opacity: 0.24 },
 ];
 
 /**
@@ -49,11 +53,16 @@ export function Creatures({ reducedMotion }: Props) {
 
       const apply = (progress: number) => {
         const vw = window.innerWidth / 100;
+        const vh = window.innerHeight / 100;
         wrappers.forEach((el, i) => {
           const c = CREATURES[i];
           const local = clamp01((progress - c.band[0]) / (c.band[1] - c.band[0]));
           const op = c.opacity * Math.min(ramp(local, 0, 0.14), 1 - ramp(local, 0.82, 1));
-          gsap.set(el, { x: lerp(c.xFrom, c.xTo, local) * vw, autoAlpha: op });
+          gsap.set(el, {
+            x: lerp(c.xFrom, c.xTo, local) * vw,
+            y: c.yFrom !== undefined ? lerp(c.yFrom, c.yTo ?? c.yFrom, local) * vh : 0,
+            autoAlpha: op,
+          });
         });
       };
 
@@ -113,6 +122,27 @@ export function Creatures({ reducedMotion }: Props) {
       q('[data-whalebody]').forEach((wb) => {
         gsap.to(wb, { y: 12, duration: 3.6, ease: 'sine.inOut', repeat: -1, yoyo: true });
       });
+      q('[data-diver-kick]').forEach((k) => {
+        gsap.to(k, {
+          rotation: 6,
+          transformOrigin: 'right center',
+          duration: 1.4,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        });
+      });
+      q('[data-diver-bubble]').forEach((b, i) => {
+        const tl = gsap.timeline({ repeat: -1, delay: i * 0.6 });
+        tl.fromTo(
+          b,
+          { y: 0, scale: 0.5 },
+          { y: -26, scale: 1, duration: 2.4 + i * 0.4, ease: 'sine.out' },
+          0,
+        )
+          .fromTo(b, { opacity: 0 }, { opacity: 0.6, duration: 0.5 }, 0)
+          .to(b, { opacity: 0, duration: 1.2 }, 1.1);
+      });
     }, rootRef);
 
     return () => ctx.revert();
@@ -134,6 +164,7 @@ export function Creatures({ reducedMotion }: Props) {
           className="absolute left-0"
           style={{ top: c.top, opacity: 0 }}
         >
+          {c.kind === 'diver' && <Diver />}
           {c.kind === 'school' && <FishSchool />}
           {c.kind === 'jelly' && <Jellyfish />}
           {c.kind === 'whale' && <Whale />}
@@ -153,6 +184,37 @@ const FISH_POS = [
   [128, 74],
   [92, 96],
 ];
+
+// A scuba diver descending head-first into the deep, trailing bubbles.
+function Diver() {
+  return (
+    <svg viewBox="-58 -36 116 92" className="h-24 w-28 sm:h-28 sm:w-36" aria-hidden="true">
+      {/* body tilted ~18° into a descent */}
+      <g transform="rotate(18)" fill="#20597f" stroke="#4a86ab" strokeWidth="1">
+        {/* fins + kicking legs */}
+        <g data-diver-kick>
+          <path d="M-18,-3 L-44,-9 L-40,-3 L-46,-1 Z" />
+          <path d="M-18,4 L-44,12 L-40,5 L-46,8 Z" />
+        </g>
+        {/* air tank */}
+        <rect x="-8" y="-16" width="12" height="15" rx="4" fill="#123c58" />
+        {/* torso */}
+        <path d="M-20,-3 C-3,-12 20,-11 31,-4 C35,-2 35,3 31,5 C20,11 -3,10 -20,6 C-24,4 -24,-1 -20,-3 Z" />
+        {/* forward reaching arm */}
+        <path d="M22,-3 C34,-9 46,-9 55,-5 L53,-1 C46,-3 34,-1 26,3 Z" />
+        {/* head + mask */}
+        <circle cx="33" cy="-3" r="8.5" />
+        <path d="M37,-7 q7,-1 6,4 l-6,1 Z" fill="#7ef0d0" opacity="0.7" stroke="none" />
+      </g>
+      {/* regulator bubbles (rise straight up, not tilted) */}
+      <g stroke="#bfefff" strokeWidth="1" fill="none">
+        <circle data-diver-bubble cx="30" cy="-14" r="2.2" opacity="0" />
+        <circle data-diver-bubble cx="36" cy="-16" r="1.5" opacity="0" />
+        <circle data-diver-bubble cx="26" cy="-18" r="1.8" opacity="0" />
+      </g>
+    </svg>
+  );
+}
 
 function FishSchool() {
   return (
