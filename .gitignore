@@ -21,3 +21,5 @@ pnpm-debug.log*
 /playwright-report/
 /playwright/.cache/
 /tests/__screenshots__/
+
+.vercel
