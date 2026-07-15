@@ -73,6 +73,13 @@ test('reduced-motion: no console errors and content is present', async ({ browse
   await expect(page.getByRole('heading', { name: 'Into the Deep' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Hadal' })).toBeAttached();
 
+  // Pinned-beats fallback: all beats must be readable (not clipped) when static.
+  for (const title of ['The Twilight Zone', 'The Oxygen Minimum', 'Where Light Is Made']) {
+    await expect(page.getByRole('heading', { name: title })).toBeVisible();
+  }
+  await page.getByRole('heading', { name: 'Where Light Is Made' }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'tests/__screenshots__/reduced-motion-beats.png' });
+
   expect(errors, `console errors: ${errors.join('\n')}`).toHaveLength(0);
   await context.close();
 });

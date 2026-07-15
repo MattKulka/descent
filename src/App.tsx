@@ -1,12 +1,12 @@
 import { ScrollProgress } from './components/ScrollProgress';
 import { Hero } from './scenes/Hero';
+import { PinnedBeats } from './scenes/PinnedBeats';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
 
-// Placeholder zones below the hero establish scroll height and the depth
-// palette. Real scenes replace these section-by-section in M2–M5.
+// Placeholder zones below establish scroll height and the depth palette.
+// Real scenes replace these section-by-section in M3–M5.
 const ZONES = [
-  { name: 'Twilight', bg: 'bg-depth-twilight', text: 'text-foam', depth: '200 m' },
   { name: 'Midnight', bg: 'bg-depth-midnight', text: 'text-foam', depth: '1,000 m' },
   { name: 'Abyss', bg: 'bg-depth-abyss', text: 'text-foam', depth: '4,000 m' },
   { name: 'Hadal', bg: 'bg-depth-hadal', text: 'text-foam', depth: '6,000 m+' },
@@ -21,6 +21,7 @@ export default function App() {
       <ScrollProgress />
       <main>
         <Hero />
+        <PinnedBeats />
         {ZONES.map((zone) => (
           <section
             key={zone.name}
