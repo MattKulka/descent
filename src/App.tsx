@@ -1,17 +1,12 @@
 import { ScrollProgress } from './components/ScrollProgress';
 import { DepthGradient } from './components/DepthGradient';
+import { Submersible } from './components/Submersible';
 import { Hero } from './scenes/Hero';
 import { PinnedBeats } from './scenes/PinnedBeats';
 import { DescentPath } from './scenes/DescentPath';
+import { AbyssDrift } from './scenes/AbyssDrift';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
-
-// Transparent placeholder zones (global DepthGradient shows through) hold
-// scroll height until the abyss/hadal scenes land in M4–M5.
-const ZONES = [
-  { name: 'Abyss', depth: '4,000 m' },
-  { name: 'Hadal', depth: '6,000 m+' },
-] as const;
 
 export default function App() {
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -20,20 +15,21 @@ export default function App() {
   return (
     <>
       <DepthGradient reducedMotion={prefersReducedMotion} />
+      <Submersible reducedMotion={prefersReducedMotion} journeySelector="[data-journey]" />
       <ScrollProgress />
       <main>
         <Hero />
         <PinnedBeats />
-        <DescentPath />
-        {ZONES.map((zone) => (
-          <section
-            key={zone.name}
-            className="flex min-h-screen flex-col items-center justify-center text-foam"
-          >
-            <p className="font-body text-sm uppercase tracking-[0.4em] opacity-70">{zone.depth}</p>
-            <h2 className="font-display text-6xl font-semibold tracking-tight">{zone.name}</h2>
-          </section>
-        ))}
+        {/* The submersible hands off across this span (descent trail → abyss). */}
+        <div data-journey>
+          <DescentPath />
+          <AbyssDrift />
+        </div>
+        {/* Placeholder hadal zone until M5 replaces it. */}
+        <section className="relative flex min-h-screen flex-col items-center justify-center text-foam">
+          <p className="font-body text-sm uppercase tracking-[0.4em] opacity-70">6,000 m+</p>
+          <h2 className="font-display text-6xl font-semibold tracking-tight">Hadal</h2>
+        </section>
       </main>
     </>
   );
