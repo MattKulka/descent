@@ -29,10 +29,7 @@ export function Closing() {
           className="group mt-14 inline-flex items-center gap-3 rounded-full border border-bioluminescent/40 px-8 py-4 font-body text-sm uppercase tracking-[0.3em] text-foam transition-colors hover:bg-bioluminescent/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bioluminescent"
         >
           Return to the surface
-          <span
-            aria-hidden="true"
-            className="text-lg transition-transform group-hover:-translate-y-1"
-          >
+          <span aria-hidden="true" className="text-lg motion-safe:animate-ascent">
             ↑
           </span>
         </button>

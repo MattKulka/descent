@@ -112,6 +112,20 @@ export function HorizontalReef() {
           invalidateOnRefresh: true,
         },
       });
+
+      // Gentle idle float on each creature so the gallery feels alive.
+      q('[data-glyph]').forEach((glyph, i) => {
+        gsap.to(glyph, {
+          y: -12,
+          rotation: i % 2 === 0 ? 2 : -2,
+          duration: 2.2 + (i % 3) * 0.5,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+          delay: i * 0.3,
+          transformOrigin: 'center',
+        });
+      });
     }, rootRef);
 
     return () => ctx.revert();
@@ -150,7 +164,7 @@ export function HorizontalReef() {
               key={c.name}
               className="flex w-[86vw] shrink-0 flex-col justify-center px-8 sm:w-[46vw] sm:px-16 lg:w-[30vw]"
             >
-              <div className="mb-6 h-40 w-40">
+              <div data-glyph className="mb-6 h-40 w-40 will-change-transform">
                 <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden="true">
                   {c.glyph}
                 </svg>

@@ -24,12 +24,18 @@ Six set-pieces, stitched into one uninterrupted descent:
 | **Hadal** | 6000 m+ | Horizontal-scroll creature gallery driven by vertical scroll |
 | **Closing** | 10,935 m | Reveal-on-enter sign-off + scroll-to-top |
 
+Throughout, ambient depth cues tie the zones together: a drifting **marine-snow**
+particle field that fades in with depth, distant **bioluminescent creatures**
+twinkling in the abyss, idle-floating gallery creatures, and a fixed
+instrument-style **depth readout** that ticks from 0 to the bottom of the ocean.
+
 <p align="center">
   <img src="docs/media/pinned-beats.png" width="32%" alt="Pinned twilight beats" />
   <img src="docs/media/descent-path.png" width="32%" alt="Self-drawing descent path" />
   <img src="docs/media/anglerfish.png" width="32%" alt="Submersible morphed into an anglerfish" />
 </p>
 <p align="center">
+  <img src="docs/media/abyss.png" width="32%" alt="Abyss with marine snow and distant bioluminescence" />
   <img src="docs/media/horizontal-reef.png" width="32%" alt="Horizontal creature gallery" />
   <img src="docs/media/closing.png" width="32%" alt="Closing call to action" />
 </p>
@@ -98,6 +104,8 @@ overall scroll progresses, plus a surface light-glow that fades with depth.
   representative static state.
 - The purely decorative travelling submersible is **omitted entirely** (there
   is no valid static position for a fixed overlay across a long page).
+- Marine snow and the abyss bioluminescence render as a **static scatter** (no
+  drift, no twinkle); the depth readout still ticks (a text update, not motion).
 
 Content stays in logical DOM order and fully readable throughout. An E2E test
 runs the whole page under `reducedMotion: 'reduce'` and asserts the key headings

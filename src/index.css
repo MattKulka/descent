@@ -40,6 +40,22 @@
   .will-change-transform {
     will-change: transform;
   }
+
+  /* Slow upward drift — an "ascent" cue on the closing CTA. Disabled under the
+     reduced-motion media query below. */
+  @keyframes ascent-bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+
+  .animate-ascent {
+    animation: ascent-bob 1.8s ease-in-out infinite;
+  }
 }
 
 /* Full reduced-motion contract: nothing moves, transitions collapse to instant. */
