@@ -119,12 +119,17 @@ export function DescentPath() {
             </g>
           </svg>
 
-          {/* Depth captions positioned alongside the trail */}
+          {/* Depth captions: centred over the trail on mobile (so they never
+              overflow a narrow viewport), fanned out to the sides on sm+. */}
           {CAPTIONS.map((c) => (
             <div
               key={c.label}
               data-cap
-              className={`absolute ${c.side === 'right' ? 'left-full ml-6 sm:ml-10' : 'right-full mr-6 text-right sm:mr-10'} whitespace-nowrap`}
+              className={`absolute left-1/2 w-[80vw] -translate-x-1/2 text-center sm:w-auto sm:translate-x-0 sm:whitespace-nowrap ${
+                c.side === 'right'
+                  ? 'sm:left-full sm:ml-10 sm:text-left'
+                  : 'sm:left-auto sm:right-full sm:mr-10 sm:text-right'
+              }`}
               style={{ top: c.top }}
             >
               <div className="font-display text-3xl font-semibold text-foam sm:text-4xl">

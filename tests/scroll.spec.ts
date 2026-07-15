@@ -9,6 +9,10 @@ import { test, expect } from '@playwright/test';
 const POSITIONS = [0, 0.1, 0.25, 0.5, 0.75, 1];
 
 test('scrolls through the descent and captures each depth', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') errors.push(msg.text());
+  });
   await page.goto('/');
   await page.waitForLoadState('networkidle');
 
@@ -31,6 +35,8 @@ test('scrolls through the descent and captures each depth', async ({ page }) => 
   });
   expect(scale).not.toBeNull();
   expect(scale as number).toBeGreaterThan(0.9);
+
+  expect(errors, `console errors: ${errors.join('\n')}`).toHaveLength(0);
 });
 
 test('closing "return to the surface" scrolls back to top', async ({ page }) => {
@@ -83,10 +89,24 @@ test('reduced-motion: no console errors and content is present', async ({ browse
   await page.goto('/');
   await page.waitForLoadState('networkidle');
 
+  // Sanity: reduced motion is actually in effect for this context.
+  expect(
+    await page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches),
+  ).toBe(true);
+
   await expect(page.getByRole('heading', { name: 'Into the Deep' })).toBeVisible();
   await expect(
     page.getByRole('heading', { name: 'You have reached the bottom of the world.' }),
   ).toBeAttached();
+
+  // The decorative travelling craft must be omitted entirely (not floating).
+  const craftHidden = await page.evaluate(() => {
+    const c = document.querySelector('[data-craft]');
+    if (!c) return true;
+    const cs = getComputedStyle(c as HTMLElement);
+    return cs.visibility === 'hidden' || Number(cs.opacity) === 0;
+  });
+  expect(craftHidden, 'submersible must be hidden under reduced motion').toBe(true);
 
   // Pinned-beats fallback: all beats must be readable (not clipped) when static.
   for (const title of ['The Twilight Zone', 'The Oxygen Minimum', 'Where Light Is Made']) {

@@ -130,7 +130,17 @@ export function Hero() {
 
       {/* Foreground content */}
       <div className="relative z-10 flex h-full items-center justify-center px-6">
-        <div data-hero="content" className="max-w-3xl text-center">
+        {/* Soft darkening behind the text lifts contrast on the bright surface
+            (white-on-cyan would otherwise fail AA) without dulling the edges. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(58% 48% at 50% 44%, rgba(4,22,43,0.5), rgba(4,22,43,0) 72%)',
+          }}
+        />
+        <div data-hero="content" className="relative max-w-3xl text-center">
           <p
             data-hero="overline"
             className="mb-6 font-body text-xs uppercase tracking-[0.5em] text-foam/70"
