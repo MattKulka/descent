@@ -5,6 +5,8 @@ import { Hero } from './scenes/Hero';
 import { PinnedBeats } from './scenes/PinnedBeats';
 import { DescentPath } from './scenes/DescentPath';
 import { AbyssDrift } from './scenes/AbyssDrift';
+import { HorizontalReef } from './scenes/HorizontalReef';
+import { Closing } from './scenes/Closing';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
 
@@ -25,11 +27,8 @@ export default function App() {
           <DescentPath />
           <AbyssDrift />
         </div>
-        {/* Placeholder hadal zone until M5 replaces it. */}
-        <section className="relative flex min-h-screen flex-col items-center justify-center text-foam">
-          <p className="font-body text-sm uppercase tracking-[0.4em] opacity-70">6,000 m+</p>
-          <h2 className="font-display text-6xl font-semibold tracking-tight">Hadal</h2>
-        </section>
+        <HorizontalReef />
+        <Closing />
       </main>
     </>
   );

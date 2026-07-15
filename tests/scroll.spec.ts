@@ -33,6 +33,19 @@ test('scrolls through the descent and captures each depth', async ({ page }) => 
   expect(scale as number).toBeGreaterThan(0.9);
 });
 
+test('closing "return to the surface" scrolls back to top', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForTimeout(600);
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
+
+  await page.getByRole('button', { name: /return to the surface/i }).click();
+  await page.waitForTimeout(2200); // allow the smooth scroll-to-top to finish
+  expect(await page.evaluate(() => window.scrollY)).toBeLessThan(50);
+});
+
 test('no ScrollTrigger leaks across repeated resizes', async ({ page }) => {
   await page.goto('/');
   await page.waitForLoadState('networkidle');
@@ -71,7 +84,9 @@ test('reduced-motion: no console errors and content is present', async ({ browse
   await page.waitForLoadState('networkidle');
 
   await expect(page.getByRole('heading', { name: 'Into the Deep' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Hadal' })).toBeAttached();
+  await expect(
+    page.getByRole('heading', { name: 'You have reached the bottom of the world.' }),
+  ).toBeAttached();
 
   // Pinned-beats fallback: all beats must be readable (not clipped) when static.
   for (const title of ['The Twilight Zone', 'The Oxygen Minimum', 'Where Light Is Made']) {
@@ -79,6 +94,12 @@ test('reduced-motion: no console errors and content is present', async ({ browse
   }
   await page.getByRole('heading', { name: 'Where Light Is Made' }).scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'tests/__screenshots__/reduced-motion-beats.png' });
+
+  // Horizontal-reef fallback: creature panels stack and are reachable.
+  await expect(page.getByRole('heading', { name: 'Life at the Bottom' })).toBeVisible();
+  for (const creature of ['Anglerfish', 'Snailfish', 'Giant Isopod']) {
+    await expect(page.getByRole('heading', { name: creature })).toBeVisible();
+  }
 
   expect(errors, `console errors: ${errors.join('\n')}`).toHaveLength(0);
   await context.close();
